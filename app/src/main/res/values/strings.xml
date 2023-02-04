@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">GPSSMSR</string>
+    <string name="servicems">ServiceMS</string>
+    <string name="localizacion" formatted="true">%1$d : %2$d : %3$d ; %4$d</string>
+    <string name="Reposo">Hola! Obten ubicacion por medio del boton</string>
+    <string name="gps">GPS</string>
+    <string name="tiempo">timestamp</string>
+    <string name="Altitud">Altitud</string>
+    <string name="Longitud">Longitud</string>
+    <string name="Latitud">Latitud</string>
+</resources>
