@@ -2,24 +2,36 @@ package com.example.gpssmsr
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.telephony.SmsManager
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
+import java.text.DecimalFormat
+
 class MainActivity : AppCompatActivity() {
 
-
+    val decimalFormat = DecimalFormat("#.###")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val switchEnable: SwitchCompat = findViewById(R.id.switch2)
+        val dialogLocation = PermissionLocationExplanationDialog()
+        val dialogSMS = PermissionSMSExplanationDialog()
+        val button: Button = findViewById(R.id.button)
+        var mensaje: String? = null
+        val smsManager = getSystemService(SmsManager::class.java)
         val latitud: TextView = findViewById(R.id.latitud)
         val longitud: TextView = findViewById(R.id.longitud)
         val altitud: TextView = findViewById(R.id.altitud)
@@ -28,10 +40,11 @@ class MainActivity : AppCompatActivity() {
         val locationListener = object: LocationListener {
             @SuppressLint("SetTextI18n")
             override fun onLocationChanged(location: Location) {
-                latitud.text = "La: ${location.latitude}"
-                longitud.text = "Lo: ${location.longitude}"
-                altitud.text = "Al: ${location.altitude}"
+                latitud.text = "La: ${decimalFormat.format(location.latitude)}"
+                longitud.text = "Lo: ${decimalFormat.format(location.longitude)}"
+                altitud.text = "Al: ${decimalFormat.format(location.altitude)}"
                 tiempo.text = "timestamp ${location.time}"
+                mensaje = "${decimalFormat.format(location.latitude)} ${decimalFormat.format(location.longitude)} ${decimalFormat.format(location.altitude)} ${decimalFormat.format(location.time)}"
             }
 
             @Deprecated("Deprecated in Java")
@@ -39,6 +52,32 @@ class MainActivity : AppCompatActivity() {
 
             override fun onProviderEnabled(provider: String) {}
             override fun onProviderDisabled(provider: String) {}
+        }
+        button.setOnClickListener{
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED){
+                // Permission not granted
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
+                    dialogSMS.show(supportFragmentManager, "PermissionSMSExplanationDialog")
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                        arrayOf(Manifest.permission.SEND_SMS),
+                        2)
+                    if(ContextCompat.checkSelfPermission(this,Manifest.permission.SEND_SMS)
+                    != PackageManager.PERMISSION_GRANTED){
+                        this.finish()
+                    } else{
+                        smsManager.sendTextMessage("+573006335532",null,mensaje,null,null)
+                        smsManager.sendTextMessage("+573209459098",null,mensaje,null,null)
+                    }
+                }
+            } else {
+                if ( mensaje != null){
+                    smsManager.sendTextMessage("+573006335532",null,mensaje,null,null)
+                    smsManager.sendTextMessage("+573209459098",null,mensaje,null,null)
+                }
+
+            }
         }
         switchEnable.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
@@ -48,18 +87,23 @@ class MainActivity : AppCompatActivity() {
                     // Should we show an explanation?
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        // Show an explanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
+                        dialogLocation.show(supportFragmentManager, "PermissionLocationExplanationDialog")
+
                     } else {
-                        // No explanation needed, we can request the permission.
+                        // Request access
                         ActivityCompat.requestPermissions(this,
                             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                             1)
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED){
+                            this.finish()
+                        } else {
+                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0f, locationListener)
+                        }
                     }
                 } else {
                     // Permission has already been granted
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0f, locationListener)
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0f, locationListener)
                 }
             } else {
                 locationManager.removeUpdates(locationListener)
@@ -73,4 +117,32 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+}
+
+class PermissionLocationExplanationDialog : DialogFragment(){
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
+            .setMessage("Este permiso es necesario, la app necesita acceder a tu localización para poder funcionar")
+            .setPositiveButton("Ok"){ _, _ ->
+                ActivityCompat.requestPermissions(this.requireActivity(),arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            }
+            .setNegativeButton("Cancel"){ _, _ ->
+                activity?.finish()
+            }
+        return builder.create()
+    }
+}
+
+class PermissionSMSExplanationDialog : DialogFragment(){
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
+            .setMessage("Este permiso es necesario, la app necesita acceder a tu servicio de mensajeria para poder funcionar")
+            .setPositiveButton("Ok"){ _, _ ->
+                ActivityCompat.requestPermissions(this.requireActivity(),arrayOf(Manifest.permission.SEND_SMS), 2)
+            }
+            .setNegativeButton("Cancel"){ _, _ ->
+                activity?.finish()
+            }
+        return builder.create()
+    }
 }

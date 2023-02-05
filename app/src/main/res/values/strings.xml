@@ -8,4 +8,5 @@
     <string name="Altitud">Altitud</string>
     <string name="Longitud">Longitud</string>
     <string name="Latitud">Latitud</string>
+    <string name="Send">SendSMS</string>
 </resources>
