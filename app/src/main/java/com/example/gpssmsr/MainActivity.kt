@@ -69,12 +69,15 @@ class MainActivity : AppCompatActivity() {
                     } else{
                         smsManager.sendTextMessage("+573006335532",null,mensaje,null,null)
                         smsManager.sendTextMessage("+573209459098",null,mensaje,null,null)
+                        smsManager.sendTextMessage("+573003632142",null,mensaje,null,null)
                     }
                 }
             } else {
                 if ( mensaje != null){
                     smsManager.sendTextMessage("+573006335532",null,mensaje,null,null)
                     smsManager.sendTextMessage("+573209459098",null,mensaje,null,null)
+                    smsManager.sendTextMessage("+573003632142",null,mensaje,null,null)
+
                 }
 
             }
