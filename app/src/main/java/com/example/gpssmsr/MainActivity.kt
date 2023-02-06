@@ -20,6 +20,34 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import java.text.DecimalFormat
 
+class PermissionLocationExplanationDialog : DialogFragment(){
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
+            .setMessage("Este permiso es necesario, la app necesita acceder a tu localización para poder funcionar")
+            .setPositiveButton("Ok"){ _, _ ->
+                ActivityCompat.requestPermissions(this.requireActivity(),arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            }
+            .setNegativeButton("Cancel"){ _, _ ->
+                activity?.finish()
+            }
+        return builder.create()
+    }
+}
+
+class PermissionSMSExplanationDialog : DialogFragment(){
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
+            .setMessage("Este permiso es necesario, la app necesita acceder a tu servicio de mensajeria para poder funcionar")
+            .setPositiveButton("Ok"){ _, _ ->
+                ActivityCompat.requestPermissions(this.requireActivity(),arrayOf(Manifest.permission.SEND_SMS), 2)
+            }
+            .setNegativeButton("Cancel"){ _, _ ->
+                activity?.finish()
+            }
+        return builder.create()
+    }
+}
+
 class MainActivity : AppCompatActivity() {
 
     val decimalFormat = DecimalFormat("#.###")
@@ -122,30 +150,3 @@ class MainActivity : AppCompatActivity() {
 
 }
 
-class PermissionLocationExplanationDialog : DialogFragment(){
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
-            .setMessage("Este permiso es necesario, la app necesita acceder a tu localización para poder funcionar")
-            .setPositiveButton("Ok"){ _, _ ->
-                ActivityCompat.requestPermissions(this.requireActivity(),arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-            }
-            .setNegativeButton("Cancel"){ _, _ ->
-                activity?.finish()
-            }
-        return builder.create()
-    }
-}
-
-class PermissionSMSExplanationDialog : DialogFragment(){
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
-            .setMessage("Este permiso es necesario, la app necesita acceder a tu servicio de mensajeria para poder funcionar")
-            .setPositiveButton("Ok"){ _, _ ->
-                ActivityCompat.requestPermissions(this.requireActivity(),arrayOf(Manifest.permission.SEND_SMS), 2)
-            }
-            .setNegativeButton("Cancel"){ _, _ ->
-                activity?.finish()
-            }
-        return builder.create()
-    }
-}
