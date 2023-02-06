@@ -19,6 +19,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class PermissionLocationExplanationDialog : DialogFragment(){
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -68,11 +70,11 @@ class MainActivity : AppCompatActivity() {
         val locationListener = object: LocationListener {
             @SuppressLint("SetTextI18n")
             override fun onLocationChanged(location: Location) {
-                latitud.text = "La: ${decimalFormat.format(location.latitude)}"
-                longitud.text = "Lo: ${decimalFormat.format(location.longitude)}"
-                altitud.text = "Al: ${decimalFormat.format(location.altitude)}"
-                tiempo.text = "timestamp ${location.time}"
-                mensaje = "${decimalFormat.format(location.latitude)} ${decimalFormat.format(location.longitude)} ${decimalFormat.format(location.altitude)} ${decimalFormat.format(location.time)}"
+                latitud.text = "Latitud: ${decimalFormat.format(location.latitude)}"
+                longitud.text = "Longitud: ${decimalFormat.format(location.longitude)}"
+                altitud.text = "Altitud: ${decimalFormat.format(location.altitude)}"
+                tiempo.text = "tiempo ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(location.time))}"
+                mensaje = "${decimalFormat.format(location.latitude)};${decimalFormat.format(location.longitude)};${decimalFormat.format(location.altitude)};${decimalFormat.format(location.time)}"
             }
 
             @Deprecated("Deprecated in Java")
