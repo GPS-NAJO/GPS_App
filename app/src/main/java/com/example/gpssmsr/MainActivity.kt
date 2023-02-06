@@ -77,76 +77,57 @@ class MainActivity : AppCompatActivity() {
 
             @Deprecated("Deprecated in Java")
             override fun onStatusChanged(Provider: String, status: Int, extras: Bundle) {}
-
             override fun onProviderEnabled(provider: String) {}
             override fun onProviderDisabled(provider: String) {}
         }
-        button.setOnClickListener{
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-                != PackageManager.PERMISSION_GRANTED){
-                // Permission not granted
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
-                    dialogSMS.show(supportFragmentManager, "PermissionSMSExplanationDialog")
-                } else {
-                    ActivityCompat.requestPermissions(this,
-                        arrayOf(Manifest.permission.SEND_SMS),
-                        2)
-                    if(ContextCompat.checkSelfPermission(this,Manifest.permission.SEND_SMS)
-                    != PackageManager.PERMISSION_GRANTED){
-                        this.finish()
-                    } else{
-                        smsManager.sendTextMessage("+573006335532",null,mensaje,null,null)
-                        smsManager.sendTextMessage("+573209459098",null,mensaje,null,null)
-                        smsManager.sendTextMessage("+573003632142",null,mensaje,null,null)
-                    }
-                }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
+            != PackageManager.PERMISSION_GRANTED){
+            // Permission not granted
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
+                dialogSMS.show(supportFragmentManager, "PermissionSMSExplanationDialog")
             } else {
-                if ( mensaje != null){
-                    smsManager.sendTextMessage("+573006335532",null,mensaje,null,null)
-                    smsManager.sendTextMessage("+573209459098",null,mensaje,null,null)
-                    smsManager.sendTextMessage("+573003632142",null,mensaje,null,null)
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.SEND_SMS),
+                    2)
+            }}
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            ) {
+                dialogLocation.show(supportFragmentManager, "PermissionLocationExplanationDialog")
 
+            } else {
+                // Request access
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    1
+                )
+            }}
+            button.setOnClickListener {
+                if (mensaje != null) {
+                    smsManager.sendTextMessage("+573006335532", null, mensaje, null, null)
+                    smsManager.sendTextMessage("+573209459098", null, mensaje, null, null)
+                    smsManager.sendTextMessage("+573003632142", null, mensaje, null, null)
                 }
-
+            }
+            switchEnable.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    locationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        1000,
+                        0f,
+                        locationListener
+                    )
+                } else {
+                    locationManager.removeUpdates(locationListener)
+                }
             }
         }
-        switchEnable.setOnCheckedChangeListener { _, isChecked ->
-            if(isChecked){
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                    // Permission is not granted
-                    // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                            Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        dialogLocation.show(supportFragmentManager, "PermissionLocationExplanationDialog")
-
-                    } else {
-                        // Request access
-                        ActivityCompat.requestPermissions(this,
-                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                            1)
-                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED){
-                            this.finish()
-                        } else {
-                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0f, locationListener)
-                        }
-                    }
-                } else {
-                    // Permission has already been granted
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0f, locationListener)
-                }
-            } else {
-                locationManager.removeUpdates(locationListener)
-            }
-        }
-
-
-
-
-
-
     }
-
-}
 
