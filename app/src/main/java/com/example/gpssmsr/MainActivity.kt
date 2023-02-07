@@ -91,8 +91,8 @@ class MainActivity : AppCompatActivity() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, AlarmReceiver::class.java)
         val pendingIntent = getBroadcast(this,5,intent,PendingIntent.FLAG_UPDATE_CURRENT)
-        val provider = locationManager.getBestProvider(Criteria(),false)
-        val lastKnownLocation: Location? = provider?.let { locationManager.getLastKnownLocation(it) }
+        val provider = locationManager.getBestProvider(Criteria(),true)
+        val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
         val interval: Long = 60 * 1000
         val locationListener = object: LocationListener {
 
@@ -146,17 +146,13 @@ class MainActivity : AppCompatActivity() {
 
 
             if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                if(lastKnownLocation != null){
-                    latitud.text = "Latitud: ${lastKnownLocation.latitude}"
-                    longitud.text = "Longitud: ${lastKnownLocation.longitude}"
-                    altitud.text = "Altitud: ${lastKnownLocation.altitude}"
-                    tiempo.text = "tiempo ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))}"
-                    mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)};" +
-                            "${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0f,locationListener)
-                } else{
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0f,locationListener)
-                }
+                latitud.text = "Latitud: ${lastKnownLocation.latitude}"
+                longitud.text = "Longitud: ${lastKnownLocation.longitude}"
+                altitud.text = "Altitud: ${lastKnownLocation.altitude}"
+                tiempo.text = "tiempo ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))}"
+                mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)};" +
+                        "${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.0001f,locationListener)
 
             } else{
                 latitud.text = "(x"
