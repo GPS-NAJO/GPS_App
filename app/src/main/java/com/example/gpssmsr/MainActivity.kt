@@ -12,6 +12,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Criteria
+import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build.VERSION
@@ -89,14 +91,22 @@ class MainActivity : AppCompatActivity() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, AlarmReceiver::class.java)
         val pendingIntent = getBroadcast(this,5,intent,PendingIntent.FLAG_UPDATE_CURRENT)
-
+        val provider = locationManager.getBestProvider(Criteria(),false)
+        val lastKnownLocation: Location? = provider?.let { locationManager.getLastKnownLocation(it) }
         val interval: Long = 60 * 1000
-        val locationListener = LocationListener { location ->
-            latitud.text = "Latitud: ${decimalFormat.format(location.latitude)}"
-            longitud.text = "Longitud: ${decimalFormat.format(location.longitude)}"
-            altitud.text = "Altitud: ${decimalFormat.format(location.altitude)}"
-            tiempo.text = "tiempo ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(location.time))}"
-            mensaje = "${decimalFormat.format(location.latitude)};${decimalFormat.format(location.longitude)};${decimalFormat.format(location.altitude)};${decimalFormat.format(location.time)}"
+        val locationListener = object: LocationListener {
+
+
+            override fun onLocationChanged(p0: Location) {
+            latitud.text = "Latitud: ${decimalFormat.format(p0.latitude)}"
+            longitud.text = "Longitud: ${decimalFormat.format(p0.longitude)}"
+            altitud.text = "Altitud: ${decimalFormat.format(p0.altitude)}"
+            tiempo.text = "tiempo ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))}"
+            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)}"
+            }
+
+
+
         }
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -136,7 +146,18 @@ class MainActivity : AppCompatActivity() {
 
 
             if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,0f,locationListener)
+                if(lastKnownLocation != null){
+                    latitud.text = "Latitud: ${lastKnownLocation.latitude}"
+                    longitud.text = "Longitud: ${lastKnownLocation.longitude}"
+                    altitud.text = "Altitud: ${lastKnownLocation.altitude}"
+                    tiempo.text = "tiempo ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))}"
+                    mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)};" +
+                            "${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0f,locationListener)
+                } else{
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0f,locationListener)
+                }
+
             } else{
                 latitud.text = "(x"
                 longitud.text = "(x"
