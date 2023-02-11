@@ -36,9 +36,8 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val smsManager = context.getSystemService(SmsManager::class.java)
         if (mensaje != null) {
-            smsManager.sendTextMessage("+573006335532", null, mensaje, null, null)
-            smsManager.sendTextMessage("+573209459098", null, mensaje, null, null)
-            smsManager.sendTextMessage("+573003632142", null, mensaje, null, null)
+            smsManager.sendTextMessage("+573003865437", null, mensaje, null, null)
+
         }
     }
 }
@@ -146,12 +145,12 @@ class MainActivity : AppCompatActivity() {
 
 
             if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                latitud.text = "Latitud: ${lastKnownLocation.latitude}"
-                longitud.text = "Longitud: ${lastKnownLocation.longitude}"
-                altitud.text = "Altitud: ${lastKnownLocation.altitude}"
-                tiempo.text = "tiempo ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))}"
-                mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)};" +
-                        "${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
+                latitud.text = "${lastKnownLocation.latitude}"
+                longitud.text = "${lastKnownLocation.longitude}"
+                altitud.text = "${lastKnownLocation.altitude}"
+                tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))
+                mensaje = "Latitud: ${decimalFormat.format(lastKnownLocation.latitude)} Longitud: ${decimalFormat.format(lastKnownLocation.longitude)}" +
+                        "Altitud: ${decimalFormat.format(lastKnownLocation.altitude)} Timesp: ${decimalFormat.format(lastKnownLocation.time)}"
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.0001f,locationListener)
 
             } else{
