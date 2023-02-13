@@ -10,4 +10,8 @@
     <string name="Longitud">Longitud</string>
     <string name="Latitud">Latitud</string>
     <string name="Send">SendSMS</string>
+    <string name="IP">IP</string>
+    <string name="Port">Port</string>
+    <string name="adres">190.84.116.246</string>
+    <string name="port">52000</string>
 </resources>
