@@ -15,6 +15,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
@@ -27,6 +28,7 @@ import kotlinx.coroutines.launch
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.Socket
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -65,8 +67,10 @@ class PermissionExplanationDialog : DialogFragment(){
         }
 }
 
+@Suppress("KotlinConstantConditions")
 class MainActivity : AppCompatActivity() {
     private val decimalFormat = DecimalFormat("#.###")
+
 
 
     @SuppressLint("SetTextI18n", "UnspecifiedImmutableFlag")
@@ -75,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val dialogpermissions = PermissionExplanationDialog()
         val ipAddressOb: EditText = findViewById(R.id.ipAdress)
+        val protocolo: ToggleButton = findViewById(R.id.PROTOCOL)
         val portOb : EditText = findViewById(R.id.Port)
         val latitud: TextView = findViewById(R.id.latitud)
         val longitud: TextView = findViewById(R.id.longitud)
@@ -87,21 +92,43 @@ class MainActivity : AppCompatActivity() {
         var ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
         var data: ByteArray
         val socket = DatagramSocket()
+        var socket2 : Socket
         var packet: DatagramPacket
         val runnable = Runnable{
-
             port = portOb.text.toString().toInt()
             ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
             data = mensaje.toByteArray()
             packet = DatagramPacket(data, data.size, ipAddress, port)
             socket.send(packet)
         }
-        CoroutineScope(Dispatchers.IO).launch{
-        while(true) {
-            runnable.run()
-            delay(timeMillis = 9000)
+        val runnable2 = Runnable {
+            port = portOb.text.toString().toInt()
+            ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
+            data = mensaje.toByteArray()
+            socket2 = Socket(ipAddress, port)
+            val outputStream = socket2.getOutputStream()
+            outputStream.write(data)
+            outputStream.flush()
         }
+        protocolo.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                // use TCP communication
+                CoroutineScope(Dispatchers.IO).launch{
+                    while(isChecked) {
+                        runnable.run()
+                        delay(timeMillis = 9000)
+                    }
+                }
+            } else {
+                CoroutineScope(Dispatchers.IO).launch{
+                    while(!isChecked) {
+                        runnable2.run()
+                        delay(timeMillis = 9000)
+                    }
+                }
+            }
         }
+
         val locationListener = LocationListener { p0 ->
             latitud.text = "Latitud: ${decimalFormat.format(p0.latitude)}"
             longitud.text = "Longitud: ${decimalFormat.format(p0.longitude)}"

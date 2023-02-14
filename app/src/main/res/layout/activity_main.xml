@@ -98,7 +98,7 @@
         android:layout_marginStart="1dp"
         android:layout_marginEnd="36dp"
         android:autofillHints="52000"
-        android:digits="@string/port"
+        android:digits="1234567890"
         android:ems="10"
         android:inputType="number"
         android:text="@string/port"
@@ -170,10 +170,12 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ToggleButton
-        android:id="@+id/toggleButton3"
+        android:id="@+id/PROTOCOL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ToggleButton"
+        android:text="@string/togglebutton"
+        android:textOff="@string/UDP"
+        android:textOn="@string/TCP"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
