@@ -20,14 +20,16 @@ import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 var caso: Int = 0
 var mensaje: String = "HOLA MUNDO"
@@ -35,7 +37,7 @@ class PermissionExplanationDialog : DialogFragment(){
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog  {
 
             val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
-                .setMessage("Es necesario tener los permisos de mensajeria y localización para que la app pueda funcionar")
+                .setMessage("Es necesario tener los permisos de Internet y localización para que la app pueda funcionar")
                 .setNegativeButton("Cancel") { _, _ ->
 
                 }
@@ -81,23 +83,33 @@ class MainActivity : AppCompatActivity() {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
-        val interval: Long = 7 * 1000
         var port = portOb.text.toString().toInt()
         var ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
         var data: ByteArray
         val socket = DatagramSocket()
         var packet: DatagramPacket
-        val executor = Executors.newSingleThreadScheduledExecutor()
-        val locationListener = LocationListener { p0 ->
-            latitud.text = "Latitud: ${decimalFormat.format(p0.latitude)}"
-            longitud.text = "Longitud: ${decimalFormat.format(p0.longitude)}"
-            altitud.text = "Altitud: ${decimalFormat.format(p0.altitude)}"
-            tiempo.text = "tiempo ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))}"
-            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)}"
+        val runnable = Runnable{
+
+            port = portOb.text.toString().toInt()
+            ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
             data = mensaje.toByteArray()
             packet = DatagramPacket(data, data.size, ipAddress, port)
             socket.send(packet)
         }
+        CoroutineScope(Dispatchers.IO).launch{
+        while(true) {
+            runnable.run()
+            delay(timeMillis = 9000)
+        }
+        }
+        val locationListener = LocationListener { p0 ->
+            latitud.text = "Latitud: ${decimalFormat.format(p0.latitude)}"
+            longitud.text = "Longitud: ${decimalFormat.format(p0.longitude)}"
+            altitud.text = "Altitud: ${decimalFormat.format(p0.altitude)}"
+            tiempo.text = "tiempo: ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))}"
+            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)}"
+        }
+
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             caso = 1
@@ -138,11 +150,11 @@ class MainActivity : AppCompatActivity() {
                 longitud.text = "${lastKnownLocation.longitude}"
                 altitud.text = "${lastKnownLocation.altitude}"
                 tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))
-                mensaje = "Latitud: ${decimalFormat.format(lastKnownLocation.latitude)} Longitud: ${decimalFormat.format(lastKnownLocation.longitude)}" +
-                        "Altitud: ${decimalFormat.format(lastKnownLocation.altitude)} Timesp: ${decimalFormat.format(lastKnownLocation.time)}"
+                mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
+                        ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
                 data = mensaje.toByteArray()
                 packet = DatagramPacket(data, data.size, ipAddress, port)
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.0001f,locationListener)
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
 
             } else{
                 latitud.text = "(x"
@@ -150,14 +162,10 @@ class MainActivity : AppCompatActivity() {
                 altitud.text = "(x"
                 tiempo.text = "(x"
             }
-        executor.scheduleAtFixedRate({
-            port = portOb.text.toString().toInt()
-            ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
-            data = mensaje.toByteArray()
-            packet = DatagramPacket(data, data.size, ipAddress, port)
-            socket.send(packet)
-        }, 0, interval, TimeUnit.MILLISECONDS)
+
         }
 
-    }
+
+
+}
 
