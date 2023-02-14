@@ -4,9 +4,14 @@
     <string name="localizacion" formatted="true">%1$d : %2$d : %3$d ; %4$d</string>
     <string name="Reposo">Hola! Obten ubicacion por medio del boton</string>
     <string name="gps">GPS</string>
+    <string name="tiempo2">Tiempo</string>
     <string name="tiempo">timestamp</string>
     <string name="Altitud">Altitud</string>
     <string name="Longitud">Longitud</string>
     <string name="Latitud">Latitud</string>
     <string name="Send">SendSMS</string>
+    <string name="IP">IP</string>
+    <string name="Port">Port</string>
+    <string name="adres">190.84.116.246</string>
+    <string name="port">52000</string>
 </resources>

@@ -1,3 +1,5 @@
+@file:Suppress("SameParameterValue")
+
 package com.example.gpssmsr
 
 import android.Manifest
@@ -6,130 +8,164 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.telephony.SmsManager
-import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
-import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.InetAddress
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PermissionLocationExplanationDialog : DialogFragment(){
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
-            .setMessage("Este permiso es necesario, la app necesita acceder a tu localización para poder funcionar")
-            .setPositiveButton("Ok"){ _, _ ->
-                ActivityCompat.requestPermissions(this.requireActivity(),arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-            }
-            .setNegativeButton("Cancel"){ _, _ ->
-                activity?.finish()
-            }
-        return builder.create()
-    }
-}
+var caso: Int = 0
+var mensaje: String = "HOLA MUNDO"
+class PermissionExplanationDialog : DialogFragment(){
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog  {
 
-class PermissionSMSExplanationDialog : DialogFragment(){
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
-            .setMessage("Este permiso es necesario, la app necesita acceder a tu servicio de mensajeria para poder funcionar")
-            .setPositiveButton("Ok"){ _, _ ->
-                ActivityCompat.requestPermissions(this.requireActivity(),arrayOf(Manifest.permission.SEND_SMS), 2)
+            val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
+                .setMessage("Es necesario tener los permisos de Internet y localización para que la app pueda funcionar")
+                .setNegativeButton("Cancel") { _, _ ->
+
+                }
+        when (caso) {
+            1 -> {
+                builder.setPositiveButton("Ok") { _, _ ->
+                    requestPermissions(this.requireActivity(), arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.INTERNET),1)
+                }
             }
-            .setNegativeButton("Cancel"){ _, _ ->
-                activity?.finish()
+            2 -> {
+                builder.setPositiveButton("Ok") { _, _ ->
+                    requestPermissions(this.requireActivity(), arrayOf(Manifest.permission.INTERNET), 2)
+                }
             }
-        return builder.create()
-    }
+            3 -> {
+                builder.setPositiveButton("ok"){ _, _ ->
+                    requestPermissions(this.requireActivity(),
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),3)
+                }
+            }
+        }
+            return builder.create()
+        }
 }
 
 class MainActivity : AppCompatActivity() {
+    private val decimalFormat = DecimalFormat("#.###")
 
-    val decimalFormat = DecimalFormat("#.###")
+
+    @SuppressLint("SetTextI18n", "UnspecifiedImmutableFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val switchEnable: SwitchCompat = findViewById(R.id.switch2)
-        val dialogLocation = PermissionLocationExplanationDialog()
-        val dialogSMS = PermissionSMSExplanationDialog()
-        val button: Button = findViewById(R.id.button)
-        var mensaje: String? = null
-        val smsManager = getSystemService(SmsManager::class.java)
+        val dialogpermissions = PermissionExplanationDialog()
+        val ipAddressOb: EditText = findViewById(R.id.ipAdress)
+        val portOb : EditText = findViewById(R.id.Port)
         val latitud: TextView = findViewById(R.id.latitud)
         val longitud: TextView = findViewById(R.id.longitud)
         val altitud: TextView = findViewById(R.id.altitud)
         val tiempo: TextView = findViewById(R.id.tiempo)
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val locationListener = object: LocationListener {
-            @SuppressLint("SetTextI18n")
-            override fun onLocationChanged(location: Location) {
-                latitud.text = "Latitud: ${decimalFormat.format(location.latitude)}"
-                longitud.text = "Longitud: ${decimalFormat.format(location.longitude)}"
-                altitud.text = "Altitud: ${decimalFormat.format(location.altitude)}"
-                tiempo.text = "tiempo ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(location.time))}"
-                mensaje = "${decimalFormat.format(location.latitude)};${decimalFormat.format(location.longitude)};${decimalFormat.format(location.altitude)};${decimalFormat.format(location.time)}"
-            }
+        val provider = locationManager.getBestProvider(Criteria(),true)
+        val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
+        var port = portOb.text.toString().toInt()
+        var ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
+        var data: ByteArray
+        val socket = DatagramSocket()
+        var packet: DatagramPacket
+        val runnable = Runnable{
 
-            @Deprecated("Deprecated in Java")
-            override fun onStatusChanged(Provider: String, status: Int, extras: Bundle) {}
-            override fun onProviderEnabled(provider: String) {}
-            override fun onProviderDisabled(provider: String) {}
+            port = portOb.text.toString().toInt()
+            ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
+            data = mensaje.toByteArray()
+            packet = DatagramPacket(data, data.size, ipAddress, port)
+            socket.send(packet)
         }
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
-            != PackageManager.PERMISSION_GRANTED){
-            // Permission not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
-                dialogSMS.show(supportFragmentManager, "PermissionSMSExplanationDialog")
-            } else {
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.SEND_SMS),
-                    2)
-            }}
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
+        CoroutineScope(Dispatchers.IO).launch{
+        while(true) {
+            runnable.run()
+            delay(timeMillis = 9000)
+        }
+        }
+        val locationListener = LocationListener { p0 ->
+            latitud.text = "Latitud: ${decimalFormat.format(p0.latitude)}"
+            longitud.text = "Longitud: ${decimalFormat.format(p0.longitude)}"
+            altitud.text = "Altitud: ${decimalFormat.format(p0.altitude)}"
+            tiempo.text = "tiempo: ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))}"
+            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)}"
+        }
+
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            caso = 1
+            // Permission not granted on SMS and Location
+            if(shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET)
+                && shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION)
             ) {
-                dialogLocation.show(supportFragmentManager, "PermissionLocationExplanationDialog")
 
+                dialogpermissions.show(supportFragmentManager, "PermissionDialog")
             } else {
-                // Request access
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    1
-                )
-            }}
-            button.setOnClickListener {
-                if (mensaje != null) {
-                    smsManager.sendTextMessage("+573006335532", null, mensaje, null, null)
-                    smsManager.sendTextMessage("+573209459098", null, mensaje, null, null)
-                    smsManager.sendTextMessage("+573003632142", null, mensaje, null, null)
-                }
+                requestPermissions(this,
+                    arrayOf(Manifest.permission.INTERNET,Manifest.permission.ACCESS_FINE_LOCATION),
+                    101)
             }
-            switchEnable.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        1000,
-                        0f,
-                        locationListener
-                    )
-                } else {
-                    locationManager.removeUpdates(locationListener)
-                }
+        } else if(ContextCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            caso = 2
+            // Permission not granted on SMS
+            if(shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET)){
+
+                dialogpermissions.show(supportFragmentManager, "PermissionDialog")
+            } else {
+                requestPermissions(this, arrayOf(Manifest.permission.INTERNET),102)
+            }
+        } else if(ContextCompat.checkSelfPermission(this,Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            caso = 3
+            // Permission not granted on Location
+            if(shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION)){
+
+                dialogpermissions.show(supportFragmentManager,"PermissionDialog")
+            } else {
+                requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),103)
             }
         }
-    }
+            if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                latitud.text = "${lastKnownLocation.latitude}"
+                longitud.text = "${lastKnownLocation.longitude}"
+                altitud.text = "${lastKnownLocation.altitude}"
+                tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))
+                mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
+                        ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
+                data = mensaje.toByteArray()
+                packet = DatagramPacket(data, data.size, ipAddress, port)
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
+
+            } else{
+                latitud.text = "(x"
+                longitud.text = "(x"
+                altitud.text = "(x"
+                tiempo.text = "(x"
+            }
+
+        }
+
+
+
+}
 
