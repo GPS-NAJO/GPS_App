@@ -6,7 +6,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Criteria
 import android.location.Location
@@ -85,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         val longitud: TextView = findViewById(R.id.longitud)
         val altitud: TextView = findViewById(R.id.altitud)
         val tiempo: TextView = findViewById(R.id.tiempo)
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
         var port = portOb.text.toString().toInt()
