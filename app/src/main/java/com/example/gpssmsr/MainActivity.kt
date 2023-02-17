@@ -13,9 +13,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.widget.EditText
+import android.widget.Button
 import android.widget.TextView
-import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
@@ -23,7 +22,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -78,9 +76,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val dialogpermissions = PermissionExplanationDialog()
-        val ipAddressOb: EditText = findViewById(R.id.ipAdress)
-        val protocolo: ToggleButton = findViewById(R.id.PROTOCOL)
-        val portOb : EditText = findViewById(R.id.Port)
+        val boton: Button = findViewById(R.id.button)
         val latitud: TextView = findViewById(R.id.latitud)
         val longitud: TextView = findViewById(R.id.longitud)
         val altitud: TextView = findViewById(R.id.altitud)
@@ -88,47 +84,35 @@ class MainActivity : AppCompatActivity() {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
-        var port = portOb.text.toString().toInt()
-        var ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
+        val port1 = 52022
+        val port2 = 51011
+        val ipAddress = InetAddress.getByName("192.168.1.16")
+        //val ipAddress2 = InetAddress.getByName("192.168.1.17")
         var data: ByteArray
         val socket = DatagramSocket()
         var socket2 : Socket
         var packet: DatagramPacket
         val runnable = Runnable{
-            port = portOb.text.toString().toInt()
-            ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
+            // port = portOb.text.toString().toInt()
             data = mensaje.toByteArray()
-            packet = DatagramPacket(data, data.size, ipAddress, port)
+            packet = DatagramPacket(data, data.size, ipAddress, port1)
             socket.send(packet)
         }
         val runnable2 = Runnable {
-            port = portOb.text.toString().toInt()
-            ipAddress = InetAddress.getByName(ipAddressOb.text.toString())
+            // port = portOb.text.toString().toInt()
             data = mensaje.toByteArray()
-            socket2 = Socket(ipAddress, port)
+            socket2 = Socket(ipAddress, port2)
             val outputStream = socket2.getOutputStream()
             outputStream.write(data)
             outputStream.flush()
         }
-        protocolo.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                // use TCP communication
-                CoroutineScope(Dispatchers.IO).launch{
-                    while(isChecked) {
-                        runnable.run()
-                        delay(timeMillis = 9000)
-                    }
-                }
-            } else {
-                CoroutineScope(Dispatchers.IO).launch{
-                    while(!isChecked) {
-                        runnable2.run()
-                        delay(timeMillis = 9000)
-                    }
-                }
+        boton.setOnClickListener {
+            // use TCP communication
+            CoroutineScope(Dispatchers.IO).launch {
+                runnable.run()
+                runnable2.run()
             }
         }
-
         val locationListener = LocationListener { p0 ->
             latitud.text = "Latitud: ${decimalFormat.format(p0.latitude)}"
             longitud.text = "Longitud: ${decimalFormat.format(p0.longitude)}"
@@ -180,7 +164,7 @@ class MainActivity : AppCompatActivity() {
                 mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
                         ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
                 data = mensaje.toByteArray()
-                packet = DatagramPacket(data, data.size, ipAddress, port)
+                packet = DatagramPacket(data, data.size, ipAddress, port1)
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
 
             } else{
