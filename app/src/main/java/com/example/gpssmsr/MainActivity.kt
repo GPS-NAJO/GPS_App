@@ -84,8 +84,8 @@ class MainActivity : AppCompatActivity() {
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
         val port1 = 51000
-        val port2 = 51011
-        //val ipAddress = InetAddress.getByName("192.168.1.16")
+        val port2 = 51000
+        //val ipAddress1 = InetAddress.getByName("192.168.1.16")
         val ipAddress2 = InetAddress.getByName("181.235.88.203")
         var data: ByteArray
         val socket = DatagramSocket()
@@ -105,6 +105,7 @@ class MainActivity : AppCompatActivity() {
             outputStream.write(data)
             outputStream.flush()
         }
+
         boton.setOnClickListener {
             // use TCP communication
             CoroutineScope(Dispatchers.IO).launch {
