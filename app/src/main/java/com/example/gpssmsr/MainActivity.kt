@@ -83,10 +83,10 @@ class MainActivity : AppCompatActivity() {
         val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
-        val port1 = 52022
+        val port1 = 51000
         val port2 = 51011
-        val ipAddress = InetAddress.getByName("192.168.1.16")
-        //val ipAddress2 = InetAddress.getByName("192.168.1.17")
+        //val ipAddress = InetAddress.getByName("192.168.1.16")
+        val ipAddress2 = InetAddress.getByName("181.235.88.203")
         var data: ByteArray
         val socket = DatagramSocket()
         var socket2 : Socket
@@ -94,13 +94,13 @@ class MainActivity : AppCompatActivity() {
         val runnable = Runnable{
             // port = portOb.text.toString().toInt()
             data = mensaje.toByteArray()
-            packet = DatagramPacket(data, data.size, ipAddress, port1)
+            packet = DatagramPacket(data, data.size, ipAddress2, port1)
             socket.send(packet)
         }
         val runnable2 = Runnable {
             // port = portOb.text.toString().toInt()
             data = mensaje.toByteArray()
-            socket2 = Socket(ipAddress, port2)
+            socket2 = Socket(ipAddress2, port2)
             val outputStream = socket2.getOutputStream()
             outputStream.write(data)
             outputStream.flush()
@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                 mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
                         ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
                 data = mensaje.toByteArray()
-                packet = DatagramPacket(data, data.size, ipAddress, port1)
+                packet = DatagramPacket(data, data.size, ipAddress2, port1)
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
 
             } else{
