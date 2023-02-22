@@ -15,8 +15,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import kotlinx.coroutines.CoroutineScope
@@ -30,37 +30,20 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-var caso: Int = 0
 var mensaje: String = "HOLA MUNDO"
 class PermissionExplanationDialog : DialogFragment(){
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog  {
 
             val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
                 .setMessage("Es necesario tener los permisos de Internet y localización para que la app pueda funcionar")
-                .setNegativeButton("Cancel") { _, _ ->
-
+                .setNegativeButton("Cancel") { _, _ -> }
+                .setPositiveButton("Ok") { _, _ ->
+                    requestPermissions(
+                        this.requireActivity(), arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ), 1
+                    )
                 }
-        when (caso) {
-            1 -> {
-                builder.setPositiveButton("Ok") { _, _ ->
-                    requestPermissions(this.requireActivity(), arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.INTERNET),1)
-                }
-            }
-            2 -> {
-                builder.setPositiveButton("Ok") { _, _ ->
-                    requestPermissions(this.requireActivity(), arrayOf(Manifest.permission.INTERNET), 2)
-                }
-            }
-            3 -> {
-                builder.setPositiveButton("ok"){ _, _ ->
-                    requestPermissions(this.requireActivity(),
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),3)
-                }
-            }
-        }
             return builder.create()
         }
 }
@@ -76,18 +59,36 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val dialogpermissions = PermissionExplanationDialog()
+
         val boton: Button = findViewById(R.id.button)
         val latitud: TextView = findViewById(R.id.latitud)
         val longitud: TextView = findViewById(R.id.longitud)
         val altitud: TextView = findViewById(R.id.altitud)
         val tiempo: TextView = findViewById(R.id.tiempo)
+
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            // Permission not granted on SMS and Location
+            if(ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            ) {
+
+                dialogpermissions.show(supportFragmentManager, "PermissionDialog")
+            } else {
+                requestPermissions(this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    101)
+            }
+        }
+
         val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
-        val port1 = 51000
-        val port2 = 51000
-        //val ipAddress1 = InetAddress.getByName("192.168.1.16")
-        val ipAddress2 = InetAddress.getByName("181.235.88.203")
+        val port1 = 52022
+        val port2 = 51012
+        val ipAddress = InetAddress.getByName("191.109.12.168")
+        //val ipAddress2 = InetAddress.getByName("192.168.1.17")
         var data: ByteArray
         val socket = DatagramSocket()
         var socket2 : Socket
@@ -95,18 +96,17 @@ class MainActivity : AppCompatActivity() {
         val runnable = Runnable{
             // port = portOb.text.toString().toInt()
             data = mensaje.toByteArray()
-            packet = DatagramPacket(data, data.size, ipAddress2, port1)
+            packet = DatagramPacket(data, data.size, ipAddress, port1)
             socket.send(packet)
         }
         val runnable2 = Runnable {
             // port = portOb.text.toString().toInt()
             data = mensaje.toByteArray()
-            socket2 = Socket(ipAddress2, port2)
+            socket2 = Socket(ipAddress, port2)
             val outputStream = socket2.getOutputStream()
             outputStream.write(data)
             outputStream.flush()
         }
-
         boton.setOnClickListener {
             // use TCP communication
             CoroutineScope(Dispatchers.IO).launch {
@@ -122,41 +122,7 @@ class MainActivity : AppCompatActivity() {
             mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)}"
         }
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            caso = 1
-            // Permission not granted on SMS and Location
-            if(shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET)
-                && shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION)
-            ) {
 
-                dialogpermissions.show(supportFragmentManager, "PermissionDialog")
-            } else {
-                requestPermissions(this,
-                    arrayOf(Manifest.permission.INTERNET,Manifest.permission.ACCESS_FINE_LOCATION),
-                    101)
-            }
-        } else if(ContextCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            caso = 2
-            // Permission not granted on SMS
-            if(shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET)){
-
-                dialogpermissions.show(supportFragmentManager, "PermissionDialog")
-            } else {
-                requestPermissions(this, arrayOf(Manifest.permission.INTERNET),102)
-            }
-        } else if(ContextCompat.checkSelfPermission(this,Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            caso = 3
-            // Permission not granted on Location
-            if(shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION)){
-
-                dialogpermissions.show(supportFragmentManager,"PermissionDialog")
-            } else {
-                requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),103)
-            }
-        }
             if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 latitud.text = "${lastKnownLocation.latitude}"
                 longitud.text = "${lastKnownLocation.longitude}"
@@ -165,7 +131,7 @@ class MainActivity : AppCompatActivity() {
                 mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
                         ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
                 data = mensaje.toByteArray()
-                packet = DatagramPacket(data, data.size, ipAddress2, port1)
+                packet = DatagramPacket(data, data.size, ipAddress, port1)
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
 
             } else{
