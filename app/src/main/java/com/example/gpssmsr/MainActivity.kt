@@ -30,6 +30,7 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 var caso: Int = 0
 var mensaje: String = "HOLA MUNDO"
 class PermissionExplanationDialog : DialogFragment(){
