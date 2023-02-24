@@ -29,22 +29,6 @@ import java.util.*
 
 
 var mensaje: String = "HOLA MUNDO"
-class PermissionExplanationDialog : DialogFragment(){
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog  {
-
-            val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
-                .setMessage("Es necesario tener los permisos de Internet y localización para que la app pueda funcionar")
-                .setNegativeButton("Cancel") { _, _ -> }
-                .setPositiveButton("Ok") { _, _ ->
-                    requestPermissions(
-                        this.requireActivity(), arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ), 1
-                    )
-                }
-            return builder.create()
-        }
-}
 
 @Suppress("KotlinConstantConditions")
 class MainActivity : AppCompatActivity() {
@@ -56,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val dialogpermissions = PermissionExplanationDialog()
+        val dialogpermissions = PermissionDialog()
 
         val boton: Button = findViewById(R.id.button)
         val latitud: TextView = findViewById(R.id.latitud)
