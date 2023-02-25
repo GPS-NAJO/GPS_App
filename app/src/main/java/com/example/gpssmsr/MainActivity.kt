@@ -4,8 +4,6 @@ package com.example.gpssmsr
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.pm.PackageManager
 import android.location.Criteria
 import android.location.Location
@@ -18,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.DialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,23 +27,8 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-var mensaje: String = "HOLA MUNDO"
-class PermissionExplanationDialog : DialogFragment(){
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog  {
 
-            val builder = AlertDialog.Builder(requireContext()).setTitle("Permission Denied")
-                .setMessage("Es necesario tener los permisos de Internet y localización para que la app pueda funcionar")
-                .setNegativeButton("Cancel") { _, _ -> }
-                .setPositiveButton("Ok") { _, _ ->
-                    requestPermissions(
-                        this.requireActivity(), arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ), 1
-                    )
-                }
-            return builder.create()
-        }
-}
+var mensaje: String = "HOLA MUNDO"
 
 @Suppress("KotlinConstantConditions")
 class MainActivity : AppCompatActivity() {
@@ -58,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val dialogpermissions = PermissionExplanationDialog()
+        val dialogpermissions = PermissionDialog()
 
         val boton: Button = findViewById(R.id.button)
         val latitud: TextView = findViewById(R.id.latitud)
@@ -87,23 +69,30 @@ class MainActivity : AppCompatActivity() {
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
         val port1 = 52022
         val port2 = 51012
+        val port3 = 51000
         val ipAddress = InetAddress.getByName("191.109.12.168")
-        //val ipAddress2 = InetAddress.getByName("192.168.1.17")
+        val ipAddress2 = InetAddress.getByName("191.109.23.244")
         var data: ByteArray
         val socket = DatagramSocket()
         var socket2 : Socket
+        val socket3 = DatagramSocket()
+        var socket4 : Socket
         var packet: DatagramPacket
         val runnable = Runnable{
-            // port = portOb.text.toString().toInt()
             data = mensaje.toByteArray()
             packet = DatagramPacket(data, data.size, ipAddress, port1)
+            val packet2 = DatagramPacket(data,data.size,ipAddress2,port3)
             socket.send(packet)
+            socket3.send(packet2)
         }
         val runnable2 = Runnable {
-            // port = portOb.text.toString().toInt()
             data = mensaje.toByteArray()
             socket2 = Socket(ipAddress, port2)
+            socket4 = Socket(ipAddress2,port3)
+            val outputStream2 = socket4.getOutputStream()
             val outputStream = socket2.getOutputStream()
+            outputStream2.write(data)
+            outputStream2.flush()
             outputStream.write(data)
             outputStream.flush()
         }
