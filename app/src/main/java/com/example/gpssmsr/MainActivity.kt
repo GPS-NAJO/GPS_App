@@ -19,10 +19,6 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.net.DatagramPacket
-import java.net.DatagramSocket
-import java.net.InetAddress
-import java.net.Socket
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -67,40 +63,20 @@ class MainActivity : AppCompatActivity() {
         val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
+        val udp = Udpsender()
         val port1 = 52022
-        val port2 = 51012
-        val port3 = 51000
-        val ipAddress = InetAddress.getByName("191.109.12.168")
-        val ipAddress2 = InetAddress.getByName("191.109.23.244")
-        var data: ByteArray
-        val socket = DatagramSocket()
-        var socket2 : Socket
-        val socket3 = DatagramSocket()
-        var socket4 : Socket
-        var packet: DatagramPacket
+        //val port2 = 51012
+        //val port3 = 51000
+        //val ipAddress = InetAddress.getByName("aflorez.sytes.net")
+        //val ipAddress2 = InetAddress.getByName("191.109.23.244")
+        //val data: ByteArray = mensaje.toByteArray()
         val runnable = Runnable{
-            data = mensaje.toByteArray()
-            packet = DatagramPacket(data, data.size, ipAddress, port1)
-            val packet2 = DatagramPacket(data,data.size,ipAddress2,port3)
-            socket.send(packet)
-            socket3.send(packet2)
-        }
-        val runnable2 = Runnable {
-            data = mensaje.toByteArray()
-            socket2 = Socket(ipAddress, port2)
-            socket4 = Socket(ipAddress2,port3)
-            val outputStream2 = socket4.getOutputStream()
-            val outputStream = socket2.getOutputStream()
-            outputStream2.write(data)
-            outputStream2.flush()
-            outputStream.write(data)
-            outputStream.flush()
+            udp.enviarData("191.109.14.205",port1, mensaje)
         }
         boton.setOnClickListener {
-            // use TCP communication
+            // use UDP communication
             CoroutineScope(Dispatchers.IO).launch {
                 runnable.run()
-                runnable2.run()
             }
         }
         val locationListener = LocationListener { p0 ->
@@ -119,8 +95,6 @@ class MainActivity : AppCompatActivity() {
                 tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))
                 mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
                         ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
-                data = mensaje.toByteArray()
-                packet = DatagramPacket(data, data.size, ipAddress, port1)
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
 
             } else{
