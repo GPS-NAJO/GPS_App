@@ -6,7 +6,7 @@ import java.net.InetAddress
 
 class Udpsender {
 
-    fun enviarData(ip:String,port:Int,mensaje: String){
+    fun enviarData(ip: String, port: Int, mensaje: String){
         val ipAddress = InetAddress.getByName(ip)
         val socket = DatagramSocket()
         val data:ByteArray = mensaje.toByteArray()

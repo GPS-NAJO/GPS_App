@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-var mensaje: String = "HOLA MUNDO"
+var mensaje: String = "1;2;3;4"
 
 @Suppress("KotlinConstantConditions")
 class MainActivity : AppCompatActivity() {
@@ -39,6 +39,14 @@ class MainActivity : AppCompatActivity() {
         val longitud: TextView = findViewById(R.id.longitud)
         val altitud: TextView = findViewById(R.id.altitud)
         val tiempo: TextView = findViewById(R.id.tiempo)
+        val ip1 = findViewById<TextView>(R.id.ip1).text.toString()
+        val ip2 = findViewById<TextView>(R.id.ip2).text.toString()
+        val ip3 = findViewById<TextView>(R.id.ip3).text.toString()
+        val ip4 = findViewById<TextView>(R.id.ip4).text.toString()
+        val puerto1 = findViewById<TextView>(R.id.puerto1).text.toString().toInt()
+        val puerto2 = findViewById<TextView>(R.id.puerto2).text.toString().toInt()
+        val puerto3 = findViewById<TextView>(R.id.puerto3).text.toString().toInt()
+        val puerto4 = findViewById<TextView>(R.id.puerto4).text.toString().toInt()
 
         val permisionAdmin = PermissionManage()
         permisionAdmin.permissionsM(this, supportFragmentManager)
@@ -47,15 +55,11 @@ class MainActivity : AppCompatActivity() {
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
         val udp = Udpsender()
-        val port1 = 52022
-        //val port2 = 51012
-        //val port3 = 51000
-        //val ipAddress = InetAddress.getByName("aflorez.sytes.net")
-        //val ipAddress2 = InetAddress.getByName("191.109.23.244")
-        //val data: ByteArray = mensaje.toByteArray()
         val runnable = Runnable{
-            udp.enviarData("191.109.14.205",port1, mensaje)
-            udp.enviarData("201.185.177.60",52000,mensaje)
+            udp.enviarData(ip1, puerto1, mensaje)
+            udp.enviarData(ip2, puerto2, mensaje)
+            udp.enviarData(ip3, puerto3, mensaje)
+            udp.enviarData(ip4, puerto4, mensaje)
         }
             // use UDP communication
             CoroutineScope(Dispatchers.IO).launch {
