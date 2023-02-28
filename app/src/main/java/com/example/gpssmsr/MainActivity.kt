@@ -13,8 +13,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +34,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val dialogpermissions = PermissionDialog()
 
         val boton: Button = findViewById(R.id.button)
         val latitud: TextView = findViewById(R.id.latitud)
@@ -44,21 +41,8 @@ class MainActivity : AppCompatActivity() {
         val altitud: TextView = findViewById(R.id.altitud)
         val tiempo: TextView = findViewById(R.id.tiempo)
 
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            // Permission not granted on SMS and Location
-            if(ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            ) {
-
-                dialogpermissions.show(supportFragmentManager, "PermissionDialog")
-            } else {
-                requestPermissions(this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    101)
-            }
-        }
+        val permisionAdmin = PermissionManage()
+        permisionAdmin.permissionsM(this, supportFragmentManager)
 
         val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         val provider = locationManager.getBestProvider(Criteria(),true)
@@ -86,7 +70,6 @@ class MainActivity : AppCompatActivity() {
             tiempo.text = "tiempo: ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))}"
             mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)}"
         }
-
 
             if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 latitud.text = "${lastKnownLocation.latitude}"
