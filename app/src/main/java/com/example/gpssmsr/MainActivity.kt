@@ -10,12 +10,12 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val boton: Button = findViewById(R.id.button)
         val latitud: TextView = findViewById(R.id.latitud)
         val longitud: TextView = findViewById(R.id.longitud)
         val altitud: TextView = findViewById(R.id.altitud)
@@ -58,12 +57,13 @@ class MainActivity : AppCompatActivity() {
             udp.enviarData("191.109.14.205",port1, mensaje)
             udp.enviarData("201.185.177.60",52000,mensaje)
         }
-        boton.setOnClickListener {
             // use UDP communication
             CoroutineScope(Dispatchers.IO).launch {
-                runnable.run()
+                while (true) {
+                    runnable.run()
+                    delay(5000)
+                }
             }
-        }
         val locationListener = LocationListener { p0 ->
             latitud.text = "Latitud: ${decimalFormat.format(p0.latitude)}"
             longitud.text = "Longitud: ${decimalFormat.format(p0.longitude)}"
