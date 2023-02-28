@@ -10,13 +10,13 @@
         android:id="@+id/ip4"
         android:layout_width="172dp"
         android:layout_height="49dp"
+        android:layout_marginStart="43dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
         android:autofillHints=""
         android:ems="10"
         android:inputType="textPersonName"
         android:text="@string/_186_170_103_252"
-        app:layout_constraintEnd_toStartOf="@+id/textView13"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ip3"
         tools:ignore="LabelFor,TextSizeCheck" />
 
@@ -38,10 +38,10 @@
         android:id="@+id/textView13"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="212dp"
+        android:layout_marginStart="236dp"
         android:layout_marginTop="40dp"
         android:text="@string/puerto"
-        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
     <EditText
@@ -49,7 +49,7 @@
         android:layout_width="172dp"
         android:layout_height="49dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="200dp"
+        android:layout_marginEnd="195dp"
         android:autofillHints=""
         android:ems="10"
         android:inputType="textPersonName"
@@ -86,6 +86,7 @@
         android:id="@+id/ip2"
         android:layout_width="172dp"
         android:layout_height="49dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="14dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="10dp"
@@ -95,6 +96,7 @@
         android:text="@string/_201_185_177_60"
         app:layout_constraintBottom_toTopOf="@+id/ip3"
         app:layout_constraintEnd_toStartOf="@+id/textView11"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ip1"
         tools:ignore="LabelFor,TextSizeCheck" />
 
@@ -141,7 +143,7 @@
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="" />
@@ -150,13 +152,12 @@
         android:id="@+id/tiempo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginStart="199dp"
+        android:layout_marginBottom="36dp"
         android:text=""
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="" />
 
@@ -164,13 +165,13 @@
         android:id="@+id/longitud"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="16dp"
         android:text=""
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="" />
 
@@ -183,7 +184,7 @@
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintHorizontal_bias="0.484"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
         tools:text="" />
@@ -192,11 +193,11 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="24dp"
         android:text="@string/Latitud"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.478"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/latitud" />
 
@@ -204,8 +205,8 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="188dp"
-        android:layout_marginTop="96dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="100dp"
         android:text="@string/tiempo2"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -215,12 +216,12 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="180dp"
-        android:layout_marginTop="92dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="190dp"
         android:text="@string/Longitud"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView3"
@@ -277,7 +278,7 @@
         android:id="@+id/ip1"
         android:layout_width="172dp"
         android:layout_height="49dp"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="45dp"
         android:layout_marginTop="472dp"
         android:autofillHints=""
         android:ems="10"
