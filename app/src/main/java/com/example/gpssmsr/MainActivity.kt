@@ -39,15 +39,6 @@ class MainActivity : AppCompatActivity() {
         val longitud: TextView = findViewById(R.id.longitud)
         val altitud: TextView = findViewById(R.id.altitud)
         val tiempo: TextView = findViewById(R.id.tiempo)
-        val ip1 = findViewById<TextView>(R.id.ip1).text.toString()
-        val ip2 = findViewById<TextView>(R.id.ip2).text.toString()
-        val ip3 = findViewById<TextView>(R.id.ip3).text.toString()
-        val ip4 = findViewById<TextView>(R.id.ip4).text.toString()
-        val puerto1 = findViewById<TextView>(R.id.puerto1).text.toString().toInt()
-        val puerto2 = findViewById<TextView>(R.id.puerto2).text.toString().toInt()
-        val puerto3 = findViewById<TextView>(R.id.puerto3).text.toString().toInt()
-        val puerto4 = findViewById<TextView>(R.id.puerto4).text.toString().toInt()
-
         val permisionAdmin = PermissionManage()
         permisionAdmin.permissionsM(this, supportFragmentManager)
 
@@ -56,6 +47,16 @@ class MainActivity : AppCompatActivity() {
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
         val udp = Udpsender()
         val runnable = Runnable{
+
+            val ip1 = findViewById<TextView>(R.id.ip1).text.toString()
+            val ip2 = findViewById<TextView>(R.id.ip2).text.toString()
+            val ip3 = findViewById<TextView>(R.id.ip3).text.toString()
+            val ip4 = findViewById<TextView>(R.id.ip4).text.toString()
+            val puerto1 = findViewById<TextView>(R.id.puerto1).text.toString().toInt()
+            val puerto2 = findViewById<TextView>(R.id.puerto2).text.toString().toInt()
+            val puerto3 = findViewById<TextView>(R.id.puerto3).text.toString().toInt()
+            val puerto4 = findViewById<TextView>(R.id.puerto4).text.toString().toInt()
+
             udp.enviarData(ip1, puerto1, mensaje)
             udp.enviarData(ip2, puerto2, mensaje)
             udp.enviarData(ip3, puerto3, mensaje)
