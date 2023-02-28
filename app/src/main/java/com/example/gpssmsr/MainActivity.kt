@@ -70,10 +70,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         val locationListener = LocationListener { p0 ->
-            latitud.text = "Latitud: ${decimalFormat.format(p0.latitude)}"
-            longitud.text = "Longitud: ${decimalFormat.format(p0.longitude)}"
-            altitud.text = "Altitud: ${decimalFormat.format(p0.altitude)}"
-            tiempo.text = "tiempo: ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))}"
+            latitud.text = " ${decimalFormat.format(p0.latitude)}"
+            longitud.text = "${decimalFormat.format(p0.longitude)}"
+            altitud.text = " ${decimalFormat.format(p0.altitude)}"
+            tiempo.text = "${SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))}"
             mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)}"
         }
 
