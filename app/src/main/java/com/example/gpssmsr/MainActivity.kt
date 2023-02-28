@@ -26,7 +26,7 @@ var mensaje: String = "HOLA MUNDO"
 
 @Suppress("KotlinConstantConditions")
 class MainActivity : AppCompatActivity() {
-    private val decimalFormat = DecimalFormat("#.###")
+    private val decimalFormat = DecimalFormat("#.#####")
 
 
 
@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         //val data: ByteArray = mensaje.toByteArray()
         val runnable = Runnable{
             udp.enviarData("191.109.14.205",port1, mensaje)
+            udp.enviarData("201.185.177.60",52000,mensaje)
         }
         boton.setOnClickListener {
             // use UDP communication
