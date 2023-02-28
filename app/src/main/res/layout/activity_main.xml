@@ -63,64 +63,6 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:text="" />
 
-    <EditText
-        android:id="@+id/ipAdress"
-        android:layout_width="156dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="204dp"
-        android:autofillHints="190.84.116.246"
-        android:ems="10"
-        android:inputType="text"
-        android:text="@string/adres"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.846"
-        tools:ignore="LabelFor,TextSizeCheck" />
-
-    <TextView
-        android:id="@+id/ip"
-        android:layout_width="13dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="4dp"
-        android:text="@string/IP"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ipAdress"
-        app:layout_constraintHorizontal_bias="0.97"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.835" />
-
-    <EditText
-        android:id="@+id/Port"
-        android:layout_width="115dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="36dp"
-        android:autofillHints="52000"
-        android:digits="@string/port"
-        android:ems="10"
-        android:inputType="number"
-        android:text="@string/port"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.846"
-        tools:ignore="LabelFor" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="@string/Port"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ipAdress"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.83" />
-
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
@@ -168,18 +110,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <ToggleButton
-        android:id="@+id/toggleButton3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ToggleButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.953" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
