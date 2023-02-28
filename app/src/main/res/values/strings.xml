@@ -17,4 +17,20 @@
     <string name="UDP">UDP</string>
     <string name="TCP">TCP</string>
     <string name="togglebutton">ToggleButton</string>
+    <string name="_186_170_103_252">186.170.103.252</string>
+    <string name="_51060">51060</string>
+    <string name="puerto">Puerto</string>
+    <string name="_191_109_14_205">191.109.14.205</string>
+    <string name="_52022">52022</string>
+    <string name="puerto1">Puerto</string>
+    <string name="_201_185_177_60">201.185.177.60</string>
+    <string name="_52000">52000</string>
+    <string name="puerto2">Puerto</string>
+    <string name="puerto3">Puerto</string>
+    <string name="ip_4">IP 4</string>
+    <string name="ip_1">IP 1</string>
+    <string name="ip_2">IP 2</string>
+    <string name="ip_3">IP 3</string>
+    <string name="_191_109_3_12">191.109.3.12</string>
+    <string name="_51000">51000</string>
 </resources>
