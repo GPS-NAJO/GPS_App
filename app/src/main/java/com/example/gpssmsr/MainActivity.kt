@@ -22,13 +22,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-var mensaje: String = "1;2;3;4"
+var mensaje: String = "1;2;3;4;5"
 
 @Suppress("KotlinConstantConditions")
 class MainActivity : AppCompatActivity() {
     private val decimalFormat = DecimalFormat("#.#####")
 
-
+    val id: String = Identity.getUUID(this)
 
     @SuppressLint("SetTextI18n", "UnspecifiedImmutableFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,7 +74,9 @@ class MainActivity : AppCompatActivity() {
             longitud.text = decimalFormat.format(p0.longitude)
             altitud.text = decimalFormat.format(p0.altitude)
             tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))
-            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)}"
+            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${
+                decimalFormat.format(p0.altitude)
+            };${decimalFormat.format(p0.time)}${decimalFormat.format(id)}"
         }
 
             if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
