@@ -28,7 +28,7 @@ var mensaje: String = "1;2;3;4;5"
 class MainActivity : AppCompatActivity() {
     private val decimalFormat = DecimalFormat("#.#####")
 
-    val id: String = Identity.getUUID(this)
+    private val id: String = Identity.getUUID(this)
 
     @SuppressLint("SetTextI18n", "UnspecifiedImmutableFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
