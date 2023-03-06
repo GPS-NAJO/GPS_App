@@ -28,20 +28,20 @@ var mensaje: String = "1;2;3;4;5"
 class MainActivity : AppCompatActivity() {
     private val decimalFormat = DecimalFormat("#.#####")
 
-    private val id: String = Identity.getUUID(this)
+
 
     @SuppressLint("SetTextI18n", "UnspecifiedImmutableFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         val latitud: TextView = findViewById(R.id.latitud)
         val longitud: TextView = findViewById(R.id.longitud)
         val altitud: TextView = findViewById(R.id.altitud)
         val tiempo: TextView = findViewById(R.id.tiempo)
         val permisionAdmin = PermissionManage()
         permisionAdmin.permissionsM(this, supportFragmentManager)
-
+        //val id = getDeviceAndroidId(this)
+        val id = Identity.getUUID(this)
         val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
@@ -74,8 +74,8 @@ class MainActivity : AppCompatActivity() {
             longitud.text = decimalFormat.format(p0.longitude)
             altitud.text = decimalFormat.format(p0.altitude)
             tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))
-            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${
-                decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)};${decimalFormat.format(id)}"
+            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};" +
+                    "${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)};${id}"
         }
 
             if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                 altitud.text = "${lastKnownLocation.altitude}"
                 tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))
                 mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
-                        ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${decimalFormat.format(id)}"
+                        ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${id}"
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
 
             } else{
@@ -95,8 +95,5 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-
-
-
 }
 

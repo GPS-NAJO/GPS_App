@@ -2,6 +2,7 @@ package com.example.gpssmsr
 
 import android.content.Context
 import android.content.SharedPreferences
+import java.security.MessageDigest
 import java.util.*
 
 class Identity private constructor() {
@@ -21,7 +22,14 @@ class Identity private constructor() {
                     sharedPreferences.edit().putString(PREF_UNIQUE_ID, uniqueID).apply()
                 }
             }
-            return uniqueID!!
+            val md = MessageDigest.getInstance("MD5")
+            md.update(uniqueID!!.toByteArray(Charsets.UTF_8))
+            val digest = md.digest()
+            val hexString = digest.fold("") { acc, byte -> acc + "%02x".format(byte) }
+
+            // Truncamos la cadena hash a la longitud deseada
+            return hexString.substring(0, 3)
+
         }
     }
 }
