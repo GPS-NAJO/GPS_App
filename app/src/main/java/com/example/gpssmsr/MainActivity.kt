@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             altitud.text = decimalFormat.format(p0.altitude)
             tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))
             mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${
-                decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)};${decimalFormat.format(id)}"
+                decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)};${id}"
         }
 
             if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                 altitud.text = "${lastKnownLocation.altitude}"
                 tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))
                 mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
-                        ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${decimalFormat.format(id)}"
+                        ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${id}"
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
 
             } else{
