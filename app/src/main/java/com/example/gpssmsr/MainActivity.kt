@@ -47,6 +47,35 @@ class MainActivity : AppCompatActivity() {
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
         val udp = Udpsender()
+
+        val locationListener = LocationListener { p0 ->
+            latitud.text = decimalFormat.format(p0.latitude)
+            longitud.text = decimalFormat.format(p0.longitude)
+            altitud.text = decimalFormat.format(p0.altitude)
+            tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))
+            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};" +
+                    "${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)};${id}"
+            mensaje = mensaje.replace(',','.')
+        }
+
+            if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                latitud.text = "${lastKnownLocation.latitude}"
+                longitud.text = "${lastKnownLocation.longitude}"
+                altitud.text = "${lastKnownLocation.altitude}"
+                tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))
+                mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
+                        ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${id}"
+                mensaje = mensaje.replace(',','.')
+                val serviceIntent = Intent(this, LocationSr::class.java)
+                startService(serviceIntent)
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
+
+            } else{
+                latitud.text = "(x"
+                longitud.text = "(x"
+                altitud.text = "(x"
+                tiempo.text = "(x"
+            }
         val runnable = Runnable{
 
             val ip1 = findViewById<TextView>(R.id.ip1).text.toString()
@@ -63,40 +92,13 @@ class MainActivity : AppCompatActivity() {
             udp.enviarData(ip3, puerto3, mensaje)
             udp.enviarData(ip4, puerto4, mensaje)
         }
-            // use UDP communication
-            CoroutineScope(Dispatchers.IO).launch {
-                while (true) {
-                    runnable.run()
-                    delay(5000)
-                }
+        // use UDP communication
+        CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                runnable.run()
+                delay(5000)
             }
-        val locationListener = LocationListener { p0 ->
-            latitud.text = decimalFormat.format(p0.latitude)
-            longitud.text = decimalFormat.format(p0.longitude)
-            altitud.text = decimalFormat.format(p0.altitude)
-            tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))
-            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};" +
-                    "${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)};${id}"
         }
-
-            if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                latitud.text = "${lastKnownLocation.latitude}"
-                longitud.text = "${lastKnownLocation.longitude}"
-                altitud.text = "${lastKnownLocation.altitude}"
-                tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))
-                mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
-                        ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${id}"
-                val serviceIntent = Intent(this, LocationSr::class.java)
-                startService(serviceIntent)
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
-
-            } else{
-                latitud.text = "(x"
-                longitud.text = "(x"
-                altitud.text = "(x"
-                tiempo.text = "(x"
-            }
-
         }
 
 

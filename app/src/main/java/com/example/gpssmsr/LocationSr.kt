@@ -36,12 +36,22 @@ class LocationSr: Service() {
         val provider = locationManager.getBestProvider(Criteria(),true)
         val lastKnownLocation: Location = provider.let { locationManager.getLastKnownLocation(it!!)!! }
         udp = Udpsender()
-        val port1 = 52022
         mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
                 ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)}"
+        mensaje = mensaje.replace(',','.')
         runnable = Runnable{
-            udp.enviarData("191.109.14.205",port1, mensaje)
-            udp.enviarData("201.185.177.60",52000,mensaje)
+            udp.enviarData("52.4.150.68",1001, mensaje)
+            udp.enviarData("44.212.144.254",1001,mensaje)
+            udp.enviarData("44.194.192.186",1001, mensaje)
+            udp.enviarData("84.239.15.140",1001,mensaje)
+        }
+
+        val locationListener = LocationListener { p0 ->
+            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)}"
+            mensaje = mensaje.replace(',','.')
+        }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
         }
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
@@ -49,11 +59,6 @@ class LocationSr: Service() {
                 delay(5000)
             }
         }
-        val locationListener = LocationListener { p0 ->
-            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)}"
-        }
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
-        }
+
     }
 }
