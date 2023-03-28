@@ -4,6 +4,7 @@ package com.example.gpssmsr
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Criteria
 import android.location.Location
@@ -20,7 +21,6 @@ import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 
 var mensaje: String = "1;2;3;4;5"
@@ -62,8 +62,6 @@ class MainActivity : AppCompatActivity() {
             udp.enviarData(ip2, puerto2, mensaje)
             udp.enviarData(ip3, puerto3, mensaje)
             udp.enviarData(ip4, puerto4, mensaje)
-            BackGround()
-
         }
             // use UDP communication
             CoroutineScope(Dispatchers.IO).launch {
@@ -88,12 +86,9 @@ class MainActivity : AppCompatActivity() {
                 tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))
                 mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
                         ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${id}"
+                val serviceIntent = Intent(this, LocationSr::class.java)
+                startService(serviceIntent)
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
-
-                enqueueBackgroundWorker(this)
-
-
-
 
             } else{
                 latitud.text = "(x"
