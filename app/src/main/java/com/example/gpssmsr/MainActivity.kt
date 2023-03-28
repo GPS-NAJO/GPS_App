@@ -4,7 +4,6 @@ package com.example.gpssmsr
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Criteria
 import android.location.Location
@@ -86,9 +85,9 @@ class MainActivity : AppCompatActivity() {
                 tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(lastKnownLocation.time))
                 mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${decimalFormat.format(lastKnownLocation.longitude)}" +
                         ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${id}"
-                val serviceIntent = Intent(this, LocationSr::class.java)
-                startService(serviceIntent)
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0.00001f,locationListener)
+
+                enqueueBackgroundWorker(applicationContext)
 
             } else{
                 latitud.text = "(x"
