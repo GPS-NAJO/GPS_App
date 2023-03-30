@@ -7,10 +7,16 @@ import java.net.InetAddress
 class Udpsender {
 
     fun enviarData(ip: String, port: Int, mensaje: String){
+        var mensajee = mensaje
+        val ch = '.'
+        if (mensajee.indexOf(ch) >= 0) {
+            mensajee=mensajee.replace(",",".")
+        }
         val ipAddress = InetAddress.getByName(ip)
         val socket = DatagramSocket()
-        val data:ByteArray = mensaje.toByteArray()
-        val packet = DatagramPacket(data, data.size, ipAddress, port,)
+        val data:ByteArray = mensajee.toByteArray()
+        val packet = DatagramPacket(data, data.size, ipAddress, port)
+
         socket.send(packet)
         socket.close()
     }

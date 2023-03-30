@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             tiempo.text = SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault()).format(Date(p0.time))
             mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};" +
                     "${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)};${id}"
-            mensaje=mensaje.replace(",",".")
+
         }
 
             if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
