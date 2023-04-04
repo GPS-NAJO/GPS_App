@@ -40,12 +40,14 @@ class LocationSr: Service() {
         val id = Identity.getUUID(applicationContext)
         val udp = Udpsender()
 
-        val locationListener = LocationListener { p0 ->
-            mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};" +
-                    "${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)};${id}"
-            mensaje = mensaje.replace(',', '.')
-        }
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            val locationListener = LocationListener { p0 ->
+                mensaje = "${decimalFormat.format(p0.latitude)};${decimalFormat.format(p0.longitude)};" +
+                        "${decimalFormat.format(p0.altitude)};${decimalFormat.format(p0.time)};${id}"
+                mensaje = mensaje.replace(',', '.')
+            }
 
             val runnable = Runnable {
                 udp.enviarData("52.4.150.68", 1001, mensaje)
@@ -53,22 +55,13 @@ class LocationSr: Service() {
                 udp.enviarData("44.194.192.186", 1001, mensaje)
                 udp.enviarData("84.239.15.140", 1001, mensaje)
             }
-            mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};${
-                decimalFormat.format(lastKnownLocation.longitude)
-            }" +
-                    ";${decimalFormat.format(lastKnownLocation.altitude)};${
-                        decimalFormat.format(
-                            lastKnownLocation.time
-                        )
-                    };${id}"
+
+            mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};" +
+                    decimalFormat.format(lastKnownLocation.longitude) +
+                    ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${id}"
             mensaje = mensaje.replace(',', '.')
 
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                5000,
-                0.00001f,
-                locationListener
-            )
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0.00001f, locationListener)
 
             CoroutineScope(Dispatchers.IO).launch {
                 while (true) {
