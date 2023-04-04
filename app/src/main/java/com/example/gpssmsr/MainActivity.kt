@@ -108,8 +108,8 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
 
         val serviceIntent = Intent(this, LocationSr::class.java)
         startForegroundService(serviceIntent)

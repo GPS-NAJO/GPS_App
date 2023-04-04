@@ -85,11 +85,7 @@ class LocationSr: Service() {
         return START_STICKY
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        stopForeground(true)
-        isServiceRunning = false
-    }
+
 }
 
 
