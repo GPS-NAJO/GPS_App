@@ -49,6 +49,15 @@ class LocationSr: Service() {
                 mensaje = mensaje.replace(',', '.')
             }
 
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0.00001f, locationListener)
+
+
+            mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};" +
+                    decimalFormat.format(lastKnownLocation.longitude) +
+                    ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${id}"
+            mensaje = mensaje.replace(',', '.')
+
+
             val runnable = Runnable {
                 udp.enviarData("52.4.150.68", 1001, mensaje)
                 udp.enviarData("44.212.144.254", 1001, mensaje)
@@ -56,12 +65,6 @@ class LocationSr: Service() {
                 udp.enviarData("84.239.15.140", 1001, mensaje)
             }
 
-            mensaje = "${decimalFormat.format(lastKnownLocation.latitude)};" +
-                    decimalFormat.format(lastKnownLocation.longitude) +
-                    ";${decimalFormat.format(lastKnownLocation.altitude)};${decimalFormat.format(lastKnownLocation.time)};${id}"
-            mensaje = mensaje.replace(',', '.')
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0.00001f, locationListener)
 
             CoroutineScope(Dispatchers.IO).launch {
                 while (true) {
