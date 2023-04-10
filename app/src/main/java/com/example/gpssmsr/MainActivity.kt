@@ -110,23 +110,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-
-        val runnable = Runnable{
-            lifecycleScope.launch(Dispatchers.IO){
-                val serviceIntent = Intent(applicationContext, LocationSr::class.java).apply {
-                    action = LocationSr.ACTION_START
-                }
-                startService(serviceIntent)
+        lifecycleScope.launch(Dispatchers.IO){
+            val serviceIntent = Intent(applicationContext, LocationSr::class.java).apply {
+                action = LocationSr.ACTION_START
             }
+            startService(serviceIntent)
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            while (true) {
-                runnable.run()
-                delay(5000)
-            }
 
-    }
     }
     override fun onRestart() {
         super.onRestart()

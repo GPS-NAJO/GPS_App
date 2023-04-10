@@ -59,7 +59,7 @@ class LocationSr: Service() {
 
 
             val runnable = Runnable {
-                udp.enviarData("52.4.150.68", 1001, mensaje)
+                udp.enviarData("34.239.15.140", 1001, mensaje)
                 udp.enviarData("44.212.144.254", 1001, mensaje)
                 udp.enviarData("44.194.192.186", 1001, mensaje)
                 udp.enviarData("84.239.15.140", 1001, mensaje)
